@@ -1,40 +1,49 @@
+// SearchBar.js
 import React, { useState } from "react";
 
-const SearchBar = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [votedOnly, setVotedOnly] = useState(false); // State for the "Voted" checkbox
-  const [notVotedOnly, setNotVotedOnly] = useState(false); // State for the "Not Voted" checkbox
+const SearchBar = ({ onSearch, searchTerm, votedOnly, notVotedOnly }) => {
+  const handleInputChange = (e) => {
+    onSearch(e.target.value, votedOnly, notVotedOnly);
+  };
 
-  const handleSearch = () => {
-    // Call the onSearch callback with the search term, votedOnly, and notVotedOnly values
-    onSearch(searchTerm, votedOnly, notVotedOnly);
+  const handleCheckboxChange = (e) => {
+    const checkboxName = e.target.name;
+    const checkboxValue = e.target.checked;
+    console.log(checkboxValue)
+
+    if (checkboxName === "voted") {
+      onSearch(searchTerm, checkboxValue, notVotedOnly);
+    } else if (checkboxName === "notVoted") {
+      onSearch(searchTerm, votedOnly, checkboxValue);
+    }
   };
 
   return (
     <div>
       <input
         type="text"
-        placeholder="Enter Name or ID"
+        placeholder="Search..."
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleInputChange}
       />
       <label>
-        Voted:
+        Voted Only:
         <input
           type="checkbox"
+          name="voted"
           checked={votedOnly}
-          onChange={() => setVotedOnly(!votedOnly)}
+          onChange={handleCheckboxChange}
         />
       </label>
       <label>
-        Not Voted:
+        Not Voted Only:
         <input
           type="checkbox"
+          name="notVoted"
           checked={notVotedOnly}
-          onChange={() => setNotVotedOnly(!notVotedOnly)}
+          onChange={handleCheckboxChange}
         />
       </label>
-      <button onClick={handleSearch}>Search</button>
     </div>
   );
 };

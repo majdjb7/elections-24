@@ -1,59 +1,107 @@
-// // Statistics.js
-// import React, { useState } from "react";
-// import { Pie } from "react-chartjs-2";
+// Statistics.js
+import React, { useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
 
-// const Statistics = () => {
-//   const [key1, setKey1] = useState(0);
-//   const [key2, setKey2] = useState(0);
+const Statistics = ({ users }) => {
+  const familyNamesChartRef = useRef(null);
+  const ballotNumberChartRef = useRef(null);
+  const generalChartRef = useRef(null);
 
-//   // Mock data for voters
-//   const votersData = {
-//     families: ["Family A", "Family B", "Family C", "Family D"],
-//     voted: [25, 30, 20, 15], // Number of voters who have voted in each family
-//     notVoted: [15, 20, 10, 25], // Number of voters who have not voted in each family
-//   };
+  useEffect(() => {
+    // Chart data for family names grouping
+    const familyNamesData = getUsersChartData(users, 'last_name');
 
-//   const dataVoted = {
-//     labels: votersData.families,
-//     datasets: [
-//       {
-//         data: votersData.voted,
-//         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-//         hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-//       },
-//     ],
-//   };
+    // Chart data for ballot number grouping
+    const ballotNumberData = getUsersChartData(users, 'ballot');
 
-//   const dataNotVoted = {
-//     labels: votersData.families,
-//     datasets: [
-//       {
-//         data: votersData.notVoted,
-//         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-//         hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-//       },
-//     ],
-//   };
+    // Chart data for general voting statistics
+    const generalData = {
+      labels: ['Voted', 'Not Voted'],
+      datasets: [
+        {
+          data: [
+            users.filter((user) => user.voted).length,
+            users.filter((user) => !user.voted).length,
+          ],
+          backgroundColor: ['#36A2EB', '#FFCE56'],
+        },
+      ],
+    };
 
-//   const resetCharts = () => {
-//     setKey1((prevKey) => prevKey + 1);
-//     setKey2((prevKey) => prevKey + 1);
-//   };
+    createChart(familyNamesChartRef, 'bar', familyNamesData);
+    createChart(ballotNumberChartRef, 'bar', ballotNumberData);
+    createChart(generalChartRef, 'doughnut', generalData);
+  }, [users]);
 
-//   return (
-//     <div>
-//       <h2>Statistics</h2>
-//       <div>
-//         <h3>Voters Who Have Voted</h3>
-//         <Pie key={key1} data={dataVoted} />
-//       </div>
-//       <div>
-//         <h3>Voters Who Have Not Voted</h3>
-//         <Pie key={key2} data={dataNotVoted} />
-//       </div>
-//       <button onClick={resetCharts}>Reset Charts</button>
-//     </div>
-//   );
-// };
+  const createChart = (chartRef, type, data) => {
+    const ctx = chartRef.current.getContext('2d');
 
-// export default Statistics;
+    // Destroy previous chart instance if it exists
+    let chartInstance = chartRef.current.chartInstance;
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    // Create a new chart instance
+    chartInstance = new Chart(ctx, {
+      type: type,
+      data: data,
+    });
+
+    // Save the chart instance in the ref for cleanup
+    chartRef.current.chartInstance = chartInstance;
+  };
+
+  const getUsersChartData = (users, groupingKey) => {
+    const groupedData = {};
+    users.forEach((user) => {
+      const group = user[groupingKey];
+      if (!groupedData[group]) {
+        groupedData[group] = { voted: 0, notVoted: 0 };
+      }
+
+      if (user.voted) {
+        groupedData[group].voted++;
+      } else {
+        groupedData[group].notVoted++;
+      }
+    });
+
+    const labels = Object.keys(groupedData);
+    const datasets = [
+      {
+        label: 'Voted',
+        data: labels.map((label) => groupedData[label].voted),
+        backgroundColor: '#36A2EB',
+      },
+      {
+        label: 'Not Voted',
+        data: labels.map((label) => groupedData[label].notVoted),
+        backgroundColor: '#FFCE56',
+      },
+    ];
+
+    return {
+      labels: labels,
+      datasets: datasets,
+    };
+  };
+
+  return (
+    <div style={{ maxWidth: '300px', margin: 'auto' }}>
+
+      <h2>General Voting Statistics</h2>
+      <canvas ref={generalChartRef} />
+
+      <h2>Statistics - Family Names Grouping</h2>
+      <canvas ref={familyNamesChartRef} />
+
+      <h2>Statistics - Ballot Number Grouping</h2>
+      <canvas ref={ballotNumberChartRef} />
+
+
+    </div>
+  );
+};
+
+export default Statistics;
