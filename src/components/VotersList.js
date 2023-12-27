@@ -16,32 +16,33 @@ const VotersList = ({ users: initialUsers, updateUserList }) => {
     setFilteredUsers(filteredUsers);
   }, [initialUsers]);
 
-  const handleSearch = (inputTerm, inputVotedOnly, inputNotVotedOnly) => {
+  const handleSearch = (inputTerm, inputVotedOnly, inputNotVotedOnly, selectedBallot) => {
     const newSearchTerm = inputTerm.trim().toLowerCase();
     const newVotedOnly = inputVotedOnly;
     const newNotVotedOnly = inputNotVotedOnly;
-
+  
     const filtered = originalUsers.filter((user) => {
       const matchesSearchTerm =
         user.first_name.toLowerCase().includes(newSearchTerm) ||
         user.last_name.toLowerCase().includes(newSearchTerm) ||
         (user.id && user.id.includes(newSearchTerm));
-
+  
+      const matchesBallotNumber = selectedBallot ? user.ballot === selectedBallot : true;
+  
       if (newVotedOnly && newNotVotedOnly) {
-        return matchesSearchTerm;
+        return matchesSearchTerm && matchesBallotNumber;
       } else if (newVotedOnly) {
-        return matchesSearchTerm && user.voted;
+        return matchesSearchTerm && user.voted && matchesBallotNumber;
       } else if (newNotVotedOnly) {
-        return matchesSearchTerm && !user.voted;
+        return matchesSearchTerm && !user.voted && matchesBallotNumber;
       } else {
-        return matchesSearchTerm;
+        return matchesSearchTerm && matchesBallotNumber;
       }
     });
-
+  
     setSearchTerm(newSearchTerm);
     setVotedOnly(newVotedOnly);
     setNotVotedOnly(newNotVotedOnly);
-
     setFilteredUsers(filtered);
     updateUserList(filtered);
   };

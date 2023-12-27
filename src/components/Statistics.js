@@ -23,7 +23,7 @@ const Statistics = ({ users }) => {
             users.filter((user) => user.voted).length,
             users.filter((user) => !user.voted).length,
           ],
-          backgroundColor: ['#36A2EB', '#FFCE56'],
+          backgroundColor: ['#2AAA8A', '#FFCE56'],
         },
       ],
     };
@@ -42,12 +42,29 @@ const Statistics = ({ users }) => {
       chartInstance.destroy();
     }
 
+    let options = {};
+
+    if (type === 'bar') {
+      options.scales = {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function (value) {
+              if (Number.isInteger(value)) {
+                return value;
+              }
+            },
+          },
+        },
+      };
+    }
+
     // Create a new chart instance
     chartInstance = new Chart(ctx, {
       type: type,
       data: data,
+      options: options,
     });
-
     // Save the chart instance in the ref for cleanup
     chartRef.current.chartInstance = chartInstance;
   };
@@ -72,7 +89,7 @@ const Statistics = ({ users }) => {
       {
         label: 'Voted',
         data: labels.map((label) => groupedData[label].voted),
-        backgroundColor: '#36A2EB',
+        backgroundColor: '#2AAA8A',
       },
       {
         label: 'Not Voted',

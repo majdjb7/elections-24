@@ -1,5 +1,6 @@
 // App.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Greet from "./components/Greet";
 import VotersList from "./components/VotersList";
 import Statistics from './components/Statistics';
@@ -14,7 +15,7 @@ import Statistics from './components/Statistics';
 // }
 function App() {
   const [activeTab, setActiveTab] = useState("App-content");
-  const [users, setUsers] = useState([
+  const [users2, setUsers2] = useState([
     {
       id: "315427740",
       first_name:"לואי                ",
@@ -57,6 +58,26 @@ function App() {
     }
     // Add more users as needed
   ]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get("https://randomuser.me/api/?results=10").then((response) => {
+      const userData = response.data.results.map((user) => {
+        let randomNumber = Math.floor(Math.random() * 10) + 1;
+        let voted = randomNumber % 2 === 0; 
+
+        return {
+          first_name: user.name.first,
+          last_name: user.name.last,
+          street: user.location.street.name,
+          ballot: `${randomNumber}`, 
+          voted: voted,
+        };
+      });
+      
+      setUsers(userData);
+    });
+  }, []); 
 
   const handleTabChange = (tabName) => {
     setActiveTab(tabName);
