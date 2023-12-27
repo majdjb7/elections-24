@@ -16,7 +16,7 @@ const Statistics = ({ users }) => {
 
     // Chart data for general voting statistics
     const generalData = {
-      labels: ['Voted', 'Not Voted'],
+      labels: [`Voted (${users.filter((user) => user.voted).length})`, `Not Voted (${users.filter((user) => !user.voted).length})`],
       datasets: [
         {
           data: [
@@ -90,13 +90,13 @@ const Statistics = ({ users }) => {
   return (
     <div style={{ maxWidth: '300px', margin: 'auto' }}>
 
-      <h2>General Voting Statistics</h2>
+      <h2 style={{textAlign: "center"}}>כללי</h2>
       <canvas ref={generalChartRef} />
 
-      <h2>Statistics - Family Names Grouping</h2>
+      <h2 style={{textAlign: "center"}}>לפי שמות משפחה</h2>
       <canvas ref={familyNamesChartRef} />
 
-      <h2>Statistics - Ballot Number Grouping</h2>
+      <h2 style={{textAlign: "center"}}>לפי מס קלפי</h2>
       <canvas ref={ballotNumberChartRef} />
 
 

@@ -4,6 +4,14 @@ import Greet from "./components/Greet";
 import VotersList from "./components/VotersList";
 import Statistics from './components/Statistics';
 
+// http://elections-bice.vercel.app/v1/elections/data
+// https://elections-hvvy0z8ad-loays-projects-e0c29d26.vercel.app/docs
+// Schema
+// {
+//   "identity_number": "string",
+//   "ballot_number": "string",
+//   "ballot_order_number": "string"
+// }
 function App() {
   const [activeTab, setActiveTab] = useState("App-content");
   const [users, setUsers] = useState([
@@ -36,6 +44,16 @@ function App() {
       house_number: "1",
       ballot: "7",
       voted: true,
+    },
+    {
+      id: "000898548",
+      first_name:"מחמד                ",
+      last_name:  "עבדאלרחמן               ",
+      father_name: "מחמד               ",
+      street: "עבדאל רחמן              ",
+      house_number: "1",
+      ballot: "4",
+      voted: false,
     }
     // Add more users as needed
   ]);
