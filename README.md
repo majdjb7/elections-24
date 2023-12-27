@@ -1,3 +1,9 @@
+# Deploying to Firebase
+## Step 1: npm run build
+## Step 2: firebase deploy
+
+In case its logged out, just run 'firebase login' before
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
