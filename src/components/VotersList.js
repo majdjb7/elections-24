@@ -37,7 +37,6 @@ const VotersList = ({ users: initialUsers, updateUserList }) => {
         user.first_name.toLowerCase().includes(newSearchTerm) ||
         user.last_name.toLowerCase().includes(newSearchTerm) ||
         (user.id && user.id.includes(newSearchTerm));
-
       const matchesBallotNumber = selectedBallot ? user.ballot === selectedBallot : true;
 
       if (newVotedOnly && newNotVotedOnly) {
